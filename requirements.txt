@@ -5,3 +5,6 @@ requests
 folium
 streamlit-folium
 matplotlib
+xarray
+netCDF4
+h5netcdf
