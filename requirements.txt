@@ -8,3 +8,6 @@ matplotlib
 xarray
 netCDF4
 h5netcdf
+cartopy
+matplotlib
+pandas
