@@ -36,12 +36,22 @@ def suhu_color(temp):
     else:
         return "red"
 
-# Plot data suhu
+# Plot data suhu dengan angka langsung di map
 for lon, lat, temp in data_suhu:
-    folium.Marker(
-        location=[lat, lon],
-        popup=f"Suhu: {temp} °C (Jam {time_selected} UTC)",
-        icon=folium.Icon(color=suhu_color(temp), icon="thermometer-half", prefix="fa")
+    folium.map.Marker(
+        [lat, lon],
+        icon=folium.DivIcon(
+            html=f"""
+                <div style="
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: {suhu_color(temp)};
+                    text-align: center;
+                ">
+                    {temp}°C
+                </div>
+            """
+        )
     ).add_to(m)
 
 st_folium(m, width=900, height=600)
