@@ -7,7 +7,7 @@ st.set_page_config(page_title="Thunderstorm Jawa Timur", layout="wide")
 st.title("Thunderstorm (TS) - Jawa Timur")
 st.markdown("Visualisasi prakiraan Thunderstorm (TS) setiap 3 jam untuk wilayah Jawa Timur")
 
-# Dummy data (nanti bisa diganti BMKG)
+# Dummy data (nanti diganti data real BMKG)
 # Format: [lon, lat, TS 0/1]
 data_ts = [
     [112.75, -7.25, 1],  # Surabaya
@@ -26,16 +26,19 @@ time_selected = st.selectbox(
 # Base map Jawa Timur
 m = folium.Map(location=[-7.5, 112], zoom_start=7, tiles="cartodb positron")
 
-# Plot data
+# Plot data pakai ikon petir
 for lon, lat, ts in data_ts:
-    color = "purple" if ts == 1 else "gray"
-    folium.CircleMarker(
-        location=[lat, lon],
-        radius=10,
-        color=color,
-        fill=True,
-        fill_opacity=0.6,
-        popup=f"TS: {'Ada' if ts==1 else 'Tidak'} (Jam {time_selected} UTC)",
-    ).add_to(m)
+    if ts == 1:  # Ada Thunderstorm
+        folium.Marker(
+            location=[lat, lon],
+            popup=f"⚡ Thunderstorm (Jam {time_selected} UTC)",
+            icon=folium.Icon(color="purple", icon="bolt", prefix="fa")
+        ).add_to(m)
+    else:  # Tidak ada TS
+        folium.Marker(
+            location=[lat, lon],
+            popup=f"Tidak ada TS (Jam {time_selected} UTC)",
+            icon=folium.Icon(color="gray", icon="cloud", prefix="fa")
+        ).add_to(m)
 
 st_folium(m, width=900, height=600)
