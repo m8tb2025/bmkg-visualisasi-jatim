@@ -1,42 +1,51 @@
 import streamlit as st
 import folium
-from streamlit_folium import st_folium
+from folium.plugins import MarkerCluster
+from branca.element import Template, MacroElement
 
-# Judul
-st.title("Sebaran Awan Rendah di Jawa Timur")
+st.title("Peta Awan Rendah")
 
-# Dummy data stasiun + awan
-# Format: [nama, lat, lon, jenis_awan]
-data_awan = [
-    ["Juanda", -7.379, 112.787, "Cu"],
-    ["Malang", -7.926, 112.602, "Cb"],
-    ["Kediri", -7.816, 112.011, "St"],
-    ["Madiun", -7.630, 111.523, "Sc"],
+# Koordinat tengah Jatim
+m = folium.Map(location=[-7.5, 112.5], zoom_start=7)
+
+# Contoh titik awan rendah
+awan_data = [
+    {"lokasi": [-7.3, 112.7], "jenis": "Cb"},
+    {"lokasi": [-7.8, 111.5], "jenis": "Cu"},
+    {"lokasi": [-8.1, 113.2], "jenis": "St"},
 ]
 
-# Map center di Jatim
-m = folium.Map(location=[-7.5, 112.5], zoom_start=8, tiles="CartoDB positron")
+# Warna untuk jenis awan
+warna = {"Cb": "red", "Cu": "blue", "St": "gray"}
 
-# Warna/ikon sesuai jenis awan
-ikon_awan = {
-    "Cu": ("cloud", "blue", "Cumulus"),
-    "Cb": ("bolt", "red", "Cumulonimbus"),
-    "St": ("align-justify", "gray", "Stratus"),
-    "Sc": ("cloud", "green", "Stratocumulus"),
-}
-
-# Tambahkan marker
-for nama, lat, lon, jenis in data_awan:
-    ikon, warna, label = ikon_awan.get(jenis, ("question", "black", "Unknown"))
-    folium.Marker(
-        location=[lat, lon],
-        popup=f"{nama} - {jenis}",
-        tooltip=f"{nama}: {jenis}",
-        icon=folium.Icon(color=warna, icon=ikon, prefix="fa"),
+for awan in awan_data:
+    folium.CircleMarker(
+        location=awan["lokasi"],
+        radius=7,
+        color=warna[awan["jenis"]],
+        fill=True,
+        fill_color=warna[awan["jenis"]],
+        popup=f"Awan {awan['jenis']}"
     ).add_to(m)
 
-# Tambahkan legend custom (HTML + CSS)
+# Tambahkan legend pakai HTML template
 legend_html = """
+{% macro html(this, kwargs) %}
 <div style="
     position: fixed; 
-    bottom: 30px; l
+    bottom: 50px; left: 50px; width: 160px; height: 110px; 
+    background-color: white;
+    border:2px solid grey; z-index:9999; font-size:14px;
+    ">
+&nbsp;<b>Legenda Awan Rendah</b><br>
+&nbsp;<i style="background:red;color:red;">oo</i>&nbsp;Cb (Cumulonimbus)<br>
+&nbsp;<i style="background:blue;color:blue;">oo</i>&nbsp;Cu (Cumulus)<br>
+&nbsp;<i style="background:gray;color:gray;">oo</i>&nbsp;St (Stratus)<br>
+</div>
+{% endmacro %}
+"""
+legend = MacroElement()
+legend._template = Template(legend_html)
+m.get_root().add_child(legend)
+
+st.components.v1.html(m._repr_html_(), height=600)
