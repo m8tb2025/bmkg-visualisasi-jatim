@@ -1,18 +1,11 @@
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
-import geopandas as gpd
 
 st.set_page_config(page_title="Streamline Angin Jawa Timur", layout="wide")
 
 st.title("Streamline Angin Jawa Timur")
 st.markdown("Visualisasi arah dan kecepatan angin (setiap 3 jam) dalam bentuk **streamline**")
-
-# --- Batas wilayah Jatim (gunakan file geojson/shapefile kalau ada) ---
-try:
-    jatim = gpd.read_file("data/jatim.geojson")
-except:
-    jatim = None
 
 # --- Dummy grid data (lon, lat, u, v) ---
 lon = np.linspace(110, 115, 30)
@@ -33,10 +26,6 @@ time_selected = st.selectbox(
 # Plot
 fig, ax = plt.subplots(figsize=(7,7))
 
-# Plot peta dasar Jatim kalau ada shapefile
-if jatim is not None:
-    jatim.boundary.plot(ax=ax, color="black", linewidth=1)
-
 # Streamline
 strm = ax.streamplot(
     Lon, Lat, u, v,
@@ -51,6 +40,8 @@ cbar.set_label("Kecepatan Angin (m/s)")
 
 ax.set_xlim(110, 115)
 ax.set_ylim(-9, -6.5)
+ax.set_xlabel("Longitude")
+ax.set_ylabel("Latitude")
 ax.set_title(f"Streamline Angin Jawa Timur (UTC {time_selected})")
 
 st.pyplot(fig)
