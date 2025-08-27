@@ -1,7 +1,6 @@
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
-import geopandas as gpd
 
 st.set_page_config(page_title="Thunderstorm Jawa Timur", layout="wide")
 
@@ -17,11 +16,11 @@ data_ts = [
     [114.35, -8.15, 0],  # Banyuwangi
 ]
 
-# Slider waktu (per 3 jam)
-time_selected = st.slider(
+# Pilih waktu (per 3 jam)
+time_selected = st.selectbox(
     "Pilih waktu (jam UTC)", 
-    options=["00", "03", "06", "09", "12", "15", "18", "21"], 
-    value="00"
+    ["00", "03", "06", "09", "12", "15", "18", "21"], 
+    index=0
 )
 
 # Base map Jawa Timur
@@ -36,7 +35,7 @@ for lon, lat, ts in data_ts:
         color=color,
         fill=True,
         fill_opacity=0.6,
-        popup=f"TS: {'Ada' if ts==1 else 'Tidak'}",
+        popup=f"TS: {'Ada' if ts==1 else 'Tidak'} (Jam {time_selected} UTC)",
     ).add_to(m)
 
 st_folium(m, width=900, height=600)
