@@ -19,15 +19,15 @@ m = folium.Map(location=[-7.5, 112.5], zoom_start=8, tiles="CartoDB positron")
 
 # Warna/ikon sesuai jenis awan
 ikon_awan = {
-    "Cu": ("cloud", "blue"),      # Cumulus
-    "Cb": ("bolt", "red"),        # Cumulonimbus
-    "St": ("align-justify", "gray"), # Stratus
-    "Sc": ("cloud", "green"),     # Stratocumulus
+    "Cu": ("cloud", "blue", "Cumulus"),
+    "Cb": ("bolt", "red", "Cumulonimbus"),
+    "St": ("align-justify", "gray", "Stratus"),
+    "Sc": ("cloud", "green", "Stratocumulus"),
 }
 
 # Tambahkan marker
 for nama, lat, lon, jenis in data_awan:
-    ikon, warna = ikon_awan.get(jenis, ("question", "black"))
+    ikon, warna, label = ikon_awan.get(jenis, ("question", "black", "Unknown"))
     folium.Marker(
         location=[lat, lon],
         popup=f"{nama} - {jenis}",
@@ -35,5 +35,8 @@ for nama, lat, lon, jenis in data_awan:
         icon=folium.Icon(color=warna, icon=ikon, prefix="fa"),
     ).add_to(m)
 
-# Tampilkan ke streamlit
-st_folium(m, width=700, height=500)
+# Tambahkan legend custom (HTML + CSS)
+legend_html = """
+<div style="
+    position: fixed; 
+    bottom: 30px; l
